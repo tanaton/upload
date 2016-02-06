@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>かんたんろだ{{.SubTitle}}</title>
+<meta name="format-detection" content="telephone=no">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="http{{if .TLS}}s{{end}}://{{.Host}}/favicon.ico">
+<link rel="icon" href="http{{if .TLS}}s{{end}}://{{.Host}}/favicon.ico">
+<link rel="stylesheet" href="http{{if .TLS}}s{{end}}://{{.Host}}/css/bootstrap-3.3.5.min.css">
+<link rel="stylesheet" href="http{{if .TLS}}s{{end}}://{{.Host}}/css/bootstrap-theme-3.3.5.min.css">
+<link rel="stylesheet" href="http{{if .TLS}}s{{end}}://{{.Host}}/css/default.css?20151122a">
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+	<div class="container">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<button type="button" class="btn btn-primary navbar-btn" data-toggle="modal" data-target="#upform">
+				アップロードする
+			</button>
+			<a class="navbar-brand" href="http{{if .TLS}}s{{end}}://{{.Host}}/">かんたんろだ</a>
+		</div>
+		<div id="navbar" class="collapse navbar-collapse">
+			<ul class="nav navbar-nav">
+				<li>
+					<a id="tool" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false">
+						ツール
+						<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+						<li><a href="http{{if .TLS}}s{{end}}://{{.Host}}/api.html">API仕様</a></li>
+						<li><a href="http{{if .TLS}}s{{end}}://{{.Host}}/tool/comment.html">画像コメント解析くん</a></li>
+						<li><a href="http{{if .TLS}}s{{end}}://{{.Host}}/tool/sharex.html">ShareX</a></li>
+					</ul>
+				</li>
+				<li><a href="http://jbbs.shitaraba.net/bbs/read.cgi/internet/22074/1420633148/">掲示板</a></li>
+				<li><a href="http{{if .TLS}}s{{end}}://{{.Host}}/tos.html">利用規約</a></li>
+				<li><a href="http://goo.gl/forms/ONHnp6cLUY">お問い合わせ</a></li>
+			</ul>
+		</div><!--/.nav-collapse -->
+	</div>
+</nav>
+
+<div id="container" class="container">
+	<div class="page-header">
+{{if .TLS}}{{else}}
+		<div class="alert alert-success" role="alert">
+			2015/11/20 <a href="https://kntn.org/" data-toggle="tooltip" title="暗号化通信とHTTP2に対応したかんたんろだです。">かんたんろだ</a>にHTTPS（HTTP2）で接続できるようになりました。
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+{{end}}
+		<div class="drag-and-drop">ドラッグ＆ドロップで簡単アップロード</div>
+	</div>
+
+	{{$this := .}}
+	{{$pl := .Pd.List}}
+	{{$pt := .Pd.Tagmap}}
+	{{$ts := .Pd.ThumbPixelSize}}
+	{{$ot := .Pd.Oldtags}}
+	{{$pn := .Pd.Pagination}}
+	<div id="image-main-area" class="clearfix" data-pagemax="{{.Pd.PageMax}}">
+		{{range $it := $pl}}
+		<div id="b{{$it.Id}}" class="image-box" data-imgid="{{$it.Id}}" data-toggle="popover" title="{{$this.ImageUrl}}{{$it.Id}}.{{$it.Ext}}">
+			<a href="{{$this.ImageUrl}}{{$it.Id}}.{{$it.Ext}}" target="_blank">
+				<img src="{{$this.ThumbUrl}}{{$it.Id}}.jpg" id="img{{$it.Id}}" width="{{$ts}}" height="{{$ts}}" alt="{{$it.Desc}}">
+			</a>
+			<div class="caption hide" id="img-caption-{{$it.Id}}">
+				<p>コメント：{{$it.Desc}}</p>
+				<p>画像サイズ：{{$it.Height}}x{{$it.Width}}</p>
+				<p>データサイズ：{{$it.Size}}</p>
+				<p>アップロード時間：{{$it.Date | html}}</p>
+				<p><span style="color:red;">[new]</span> <a href="{{$this.ViewerUrl}}{{$it.Id}}" target="_blank">画像ビューアで開く</a></p>
+				{{if ne 0 (len $it.Tags)}}
+				<p>タグ：
+				{{range $val := $it.Tags}}
+				{{if call $this.Find $pt $val}}
+				<a href="http{{if $this.TLS}}s{{end}}://{{$this.Host}}/?{{$ot}}">{{$val | html}}</a>
+				{{else}}
+				<a href="http{{if $this.TLS}}s{{end}}://{{$this.Host}}/?tag={{$val | urlquery}}{{if ne $ot ``}}&{{$ot}}{{end}}">{{$val | html}}</a>
+				{{end}}
+				{{else}}
+				{{end}}
+				</p>
+				{{end}}
+				{{if $it.PassCode}}
+				<p>
+				[<a href="#update" data-toggle="modal" data-target="#update" data-imgid="{{$it.Id}}">編集する</a>]
+				[<a href="#delete" data-toggle="modal" data-target="#delete" data-imgid="{{$it.Id}}">削除する</a>]
+				</p>
+				{{end}}
+			</div>
+		</div>
+		{{else}}
+		{{end}}
+	</div>
+
+	<nav>
+		<ul class="pagination pagination-lg">
+			{{if ne $pn.Prev 0}}
+			<li><a href="http{{if $this.TLS}}s{{end}}://{{$this.Host}}/?{{if ne $ot ``}}{{$ot}}&{{end}}p={{$pn.Prev}}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+			{{else}}
+			<li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+			{{end}}
+			{{range $it := $pn.List}}
+			{{if eq $pn.Now $it}}
+			<li class="active"><a href="http{{if $this.TLS}}s{{end}}://{{$this.Host}}/?{{if ne $ot ``}}{{$ot}}&{{end}}p={{$it}}">{{$it}} <span class="sr-only">(current)</span></a></li>
+			{{else}}
+			<li><a href="http{{if $this.TLS}}s{{end}}://{{$this.Host}}/?{{if ne $ot ``}}{{$ot}}&{{end}}p={{$it}}">{{$it}}</a></li>
+			{{end}}
+			{{end}}
+			{{if ne $pn.Next 0}}
+			<li><a href="http{{if $this.TLS}}s{{end}}://{{$this.Host}}/?{{if ne $ot ``}}{{$ot}}&{{end}}p={{$pn.Next}}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+			{{else}}
+			<li class="disabled"><a href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+			{{end}}
+		</ul>
+	</nav>
+
+	<h3>注意事項</h3>
+	<ul>
+		<li><span style="font-size:6pt;">BMPファイルをアップロードすると自動的にPNGにエンコードします。</span></li>
+		<li><span style="font-size:6pt;">複数枚の画像が格納されたTIFFファイルには対応していません。</span></li>
+		<li><span style="font-size:6pt;">ファイルにダウンロード情報が残る新しいタイプの画像（JPEG/PNG/GIF/BMP/TIFF/WEBP）専用アップローダーです。ファイルを他所に転載する際には気をつけましょう。</span></li>
+	</ul>
+</div><!-- container -->
+
+<!-- Modal -->
+<div class="modal fade" id="upform" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h3 class="modal-title" id="myModalLabel">アップロードフォーム</h3>
+			</div>
+			<div class="modal-body">
+				<p>対応ファイル：jpg, png, gif, bmp, tiff, webp</p>
+				<p>コメントなど含めて1ファイル8MBまで。</p>
+				<form enctype="multipart/form-data" action="/api/upload?jump=true" method="post" role="form">
+					<div class="form-group">
+						<label for="upform-input-file">ファイル指定</label>  <a href="#" data-toggle="tooltip" title="アップロードする画像ファイルを指定します。複数指定できます。"><span class="glyphicon glyphicon-info-sign"></span></a>
+						<input type="file" name="uploadfile" value="ファイル" class="form-control iill-input" id="upform-input-file" accept="image/*" required>
+					</div>
+					<button class="btn btn-default" type="button" data-toggle="collapse" data-target="#uploadoption" aria-expanded="false" aria-controls="uploadoption">
+						オプション
+					</button>
+					<input type="submit" class="btn btn-primary upform-submit" value="アップロード">
+					<div class="collapse" id="uploadoption">
+						<div class="well well-sm">
+							<div class="form-group">
+								<label for="upform-input-comment">コメント</label> <a href="#" data-toggle="tooltip" title="コメントを入力できます。画像の説明等にお使いください。"><span class="glyphicon glyphicon-info-sign"></span></a>
+								<input type="text" name="description" value="" class="form-control iill-input" id="upform-input-comment" maxlength="140" placeholder="コメント">
+							</div>
+							<div class="row">
+								<div class="form-group col-md-4">
+									<label for="upform-input-tags">タグ</label> <a href="#" data-toggle="tooltip" title="タグを設定します。スペースで区切ることで複数設定できます。タグ検索が利用できるようになります。"><span class="glyphicon glyphicon-info-sign"></span></a>
+									<input type="text" name="tags" value="" class="form-control iill-input" id="upform-input-tags" maxlength="255" placeholder="タグ（スペース区切り）">
+								</div>
+								<div class="form-group col-md-4">
+									<label for="upform-input-pass">編集パスワード</label> <a href="#" data-toggle="tooltip" title="パスワードを設定します。後からファイルの編集、削除を行いたい場合はパスワードを設定してください。"><span class="glyphicon glyphicon-info-sign"></span></a>
+									<input type="text" name="passcode" value="" class="form-control iill-input" id="upform-input-pass" maxlength="16" placeholder="編集パスワード">
+								</div>
+								<div class="form-group col-md-4">
+									<label for="upform-input-delete-wait">時間経過で自動削除</label> <a href="#" data-toggle="tooltip" title="時間経過により自動的に画像を削除します。"><span class="glyphicon glyphicon-info-sign"></span></a>
+									<select class="form-control iill-input" name="delete_wait_minute" id="upform-input-delete-wait">
+										<option value="">--- 使用しない ---</option>
+										<option value="15">15分後</option>
+										<option value="60">60分後</option>
+										<option value="180">3時間後</option>
+										<option value="1440">1日後</option>
+										<option value="7200">5日後</option>
+										<option value="43200">30日後</option>
+									</select>
+								</div>
+								<div class="form-group col-md-6">
+									<label for="upform-input-stamp">スタンプ</label> <a href="#" data-toggle="tooltip" title="画像にスタンプを押します。※JPEG/PNG/BMPのみ対応。ある程度の画像サイズが必要です。"><span class="glyphicon glyphicon-info-sign"></span></a>
+									<select class="form-control iill-input" name="stamp" id="upform-input-stamp">
+										<option value="">--- 選択してください（使用しない） ---</option>
+										<option value="pca_circle">広告クリックお願いします。（new）</option>
+										<option value="pca_circle_yukisann">広告クリックお願いします。雪さん付き（new）</option>
+										<option value="tsks_character">転載禁止 文字にインク（new）</option>
+										<option value="tsks_background">転載禁止 背景にインク（new）</option>
+										<option value="adclick">広告クリックにご協力下さい</option>
+										<option value="afiblog">アフィブログ転載禁止</option>
+										<option value="confidential">CONFIDENTIAL</option>
+									</select>
+								</div>
+								<div class="form-group col-md-6">
+									<label for="upform-input-stamp-position">スタンプ位置</label> <a href="#" data-toggle="tooltip" title="スタンプの位置を指定します。"><span class="glyphicon glyphicon-info-sign"></span></a>
+									<select class="form-control iill-input" name="stamp_position" id="upform-input-stamp-position">
+										<option value="">--- 選択してください（左上） ---</option>
+										<option value="ul">左上</option>
+										<option value="ur">右上</option>
+										<option value="cc">中央</option>
+										<option value="ll">左下</option>
+										<option value="lr">右下</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="upform-input-thumb-change">サムネイル変更</label> <a href="#" data-toggle="tooltip" title="サムネイルを隠します。"><span class="glyphicon glyphicon-info-sign"></span></a>
+								<select class="form-control iill-input" name="thumb_change" id="upform-input-thumb-change">
+									<option value="">--- 選択してください ---</option>
+									<option value="mosaic_proc">モザイク処理</option>
+									<option value="iill">かんたんろだのロゴ</option>
+									<option value="gurotyu">グロ注意</option>
+								</select>
+							</div>
+							<input type="submit" class="btn btn-primary upform-submit" value="アップロード">
+						</div>
+					</div>
+				</form>
+				<p class="drag-and-drop">
+					ドラッグ＆ドロップによるアップロードにも対応しています。<br>
+					このページに適当にドロップするとフォームが出てきます。
+				</p>
+				<div id="upform-list">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="updrag" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h3 class="modal-title" id="myModalLabel">アップロードフォーム（ドラッグ＆ドロップ）</h3>
+			</div>
+			<div class="modal-body">
+				<p>対応ファイル：jpg, png, gif, bmp, tiff, webp</p>
+				<p>コメントなど含めて1ファイル8MBまで。</p>
+				<form role="form">
+					<div class="form-group">
+						<label for="updrag-input-comment">コメント</label> <a href="#" data-toggle="tooltip" title="コメントを入力できます。画像の説明等にお使いください。"><span class="glyphicon glyphicon-info-sign"></span></a>
+						<input type="text" name="description" value="" class="form-control" id="updrag-input-comment" maxlength="140" placeholder="コメント">
+					</div>
+					<div class="row">
+						<div class="form-group col-md-4">
+							<label for="updrag-input-tags">タグ</label> <a href="#" data-toggle="tooltip" title="タグを設定します。スペースで区切ることで複数設定できます。タグ検索が利用できるようになります。"><span class="glyphicon glyphicon-info-sign"></span></a>
+							<input type="text" name="tags" value="" class="form-control" id="updrag-input-tags" maxlength="255" placeholder="タグ（スペース区切り）">
+						</div>
+						<div class="form-group col-md-4">
+							<label for="updrag-input-pass">編集パスワード</label> <a href="#" data-toggle="tooltip" title="パスワードを設定します。後からファイルの編集、削除を行いたい場合はパスワードを設定してください。"><span class="glyphicon glyphicon-info-sign"></span></a>
+							<input type="text" name="passcode" value="" class="form-control" id="updrag-input-pass" maxlength="16" placeholder="編集パスワード">
+						</div>
+						<div class="form-group col-md-4">
+							<label for="updrag-input-delete-wait">時間経過で自動削除</label> <a href="#" data-toggle="tooltip" title="時間経過により自動的に画像を削除します。"><span class="glyphicon glyphicon-info-sign"></span></a>
+							<select class="form-control iill-input" name="delete_wait_minute" id="updrag-input-delete-wait">
+								<option value="">--- 使用しない ---</option>
+								<option value="15">15分後</option>
+								<option value="60">60分後</option>
+								<option value="180">3時間後</option>
+								<option value="1440">1日後</option>
+								<option value="7200">5日後</option>
+								<option value="43200">30日後</option>
+							</select>
+						</div>
+						<div class="form-group col-md-6">
+							<label for="updrag-input-stamp">スタンプ</label> <a href="#" data-toggle="tooltip" title="画像にスタンプを押します。※JPEG/PNG/BMPのみ対応。ある程度の画像サイズが必要です。"><span class="glyphicon glyphicon-info-sign"></span></a>
+							<select class="form-control" name="stamp" id="updrag-input-stamp">
+								<option value="">--- 選択してください（使用しない） ---</option>
+								<option value="pca_circle">広告クリックお願いします。（new）</option>
+								<option value="pca_circle_yukisann">広告クリックお願いします。雪さん付き（new）</option>
+								<option value="tsks_character">転載禁止 文字にインク（new）</option>
+								<option value="tsks_background">転載禁止 背景にインク（new）</option>
+								<option value="adclick">広告クリックにご協力下さい</option>
+								<option value="afiblog">アフィブログ転載禁止</option>
+								<option value="confidential">CONFIDENTIAL</option>
+							</select>
+						</div>
+						<div class="form-group col-md-6">
+							<label for="updrag-input-stamp-position">スタンプ位置</label> <a href="#" data-toggle="tooltip" title="スタンプの位置を指定します。"><span class="glyphicon glyphicon-info-sign"></span></a>
+							<select class="form-control" name="stamp_position" id="updrag-input-stamp-position">
+								<option value="">--- 選択してください（左上） ---</option>
+								<option value="ul">左上</option>
+								<option value="ur">右上</option>
+								<option value="cc">中央</option>
+								<option value="ll">左下</option>
+								<option value="lr">右下</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="updrag-input-thumb-change">サムネイル変更</label> <a href="#" data-toggle="tooltip" title="サムネイルを隠します。"><span class="glyphicon glyphicon-info-sign"></span></a>
+						<select class="form-control iill-input" name="thumb_change" id="updrag-input-thumb-change">
+							<option value="">--- 選択してください ---</option>
+							<option value="mosaic_proc">モザイク処理</option>
+							<option value="iill">かんたんろだのロゴ</option>
+							<option value="gurotyu">グロ注意</option>
+						</select>
+					</div>
+					<input type="submit" class="btn btn-primary" id="updrag-submit" value="アップロード">
+				</form>
+				<h4>アップロード対象</h4>
+				<p>以下のファイルをアップロードします。（※まだアップロードされていません。）</p>
+				<div id="updrag-list">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="update" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h3 class="modal-title" id="myModalLabel">ファイル情報の更新</h3>
+			</div>
+			<div class="modal-body">
+				<p>対応ファイル：jpg, png, gif, bmp, tiff, webp</p>
+				<form id="update-form" enctype="multipart/form-data" action="/api/update" method="post" role="form">
+					<div class="form-group">
+						<label for="input-pass">編集パスワード*</label>
+						<input type="text" name="key" value="" class="form-control" maxlength="16" placeholder="編集パスワード" required>
+					</div>
+					<div class="form-group">
+						<label for="input-pass">新しいパスワード</label>
+						<input type="text" name="passcode" value="" class="form-control" maxlength="16" placeholder="新しいパスワード">
+						<span class="help-block">入力が無い場合、現在のパスワードを引き継ぎます。</span>
+					</div>
+					<div class="form-group">
+						<label for="input-tags">タグ（スペース区切り）</label>
+						<input type="text" name="tags" value="" class="form-control" maxlength="255" placeholder="タグ（スペース区切り）">
+					</div>
+					<div class="form-group">
+						<label for="input-comment">コメント</label>
+						<input type="text" name="description" value="" class="form-control" maxlength="140" placeholder="コメント">
+					</div>
+					<input type="submit" class="btn btn-default" value="更新">
+				</form>
+				<p>*必須</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h3 class="modal-title" id="myModalLabel">ファイルの削除</h3>
+			</div>
+			<div class="modal-body">
+				<p>対応ファイル：jpg, png, gif, bmp, tiff, webp</p>
+				<form action="/api/delete" method="get" role="form">
+					<div class="form-group">
+						<label for="input-pass">編集パスワード*</label>
+						<input type="text" name="passcode" value="" class="form-control" maxlength="16" placeholder="編集パスワード" required>
+					</div>
+					<input type="hidden" id="delete-input-id" name="id" value="">
+					<input type="hidden" name="jump" value="true">
+					<input type="submit" class="btn btn-default" value="削除">
+				</form>
+				<p>*必須</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--[if lt IE 9]>
+<script src="/js/ie/html5shiv.min.js"></script>
+<script src="/js/ie/respond.min.js"></script>
+<![endif]-->
+<script src="/js/lib/jquery-1.11.3.min.js"></script>
+<script src="/js/lib/bootstrap-3.3.5.min.js"></script>
+<script src="/js/dashboard.js?20151122a"></script>
+</body>
+</html>

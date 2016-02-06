@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		<meta charset="utf-8">
+		<title>画像ビューア No.{{.Num}} - かんたんろだ</title>
+		<meta name="format-detection" content="telephone=no">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="shortcut icon" href="http{{if .TLS}}s{{end}}://{{.Host}}/favicon.ico">
+		<link rel="icon" href="http{{if .TLS}}s{{end}}://{{.Host}}/favicon.ico">
+		<style>
+body{background-color:#000;}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div id="dzicontent"></div>
+		</div>
+		<script src="/js/lib/jquery-1.11.3.min.js"></script>
+		<script src="/js/lib/openseadragon.min.js"></script>
+		<script type="text/javascript">
+var ud = '{{.UserData}}';
+$(function(){
+	var dziviewer = OpenSeadragon({
+		id: "dzicontent",
+		prefixUrl: "/omake/dzi_viewer/",
+		tileSources: "{{.DziPath}}",
+		defaultZoomLevel: 0.9,
+		minZoomImageRatio: 0.1,
+		maxZoomPixelRatio: 10
+	});
+	dziviewer.addHandler('update-viewport', function(){
+		var context = $('canvas')[0].getContext('2d');
+		var udl = ud.split("\n");
+		var l = udl.length;
+		var i = 0;
+
+		context.fillStyle = 'rgba(0, 0, 0, 0.01)';
+		context.font = 'bold 24px Arial';
+		for(i = 0; i < l; i++){
+			context.fillText(udl[i], 5, 60 + (i * 24));
+		}
+	});
+	dziviewer.setFullPage(true);
+	$(window).resize(function(){
+		dziviewer.setFullPage(false);
+		dziviewer.setFullPage(true);
+	});
+});
+		</script>
+	</body>
+</html>

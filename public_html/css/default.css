@@ -1,0 +1,7 @@
+@charset "UTF-8";
+body {font-family: "ＭＳ Ｐゴシック", "ＭＳ ゴシック", sans-serif;padding-top: 20px;padding-bottom: 20px;}
+a {-webkit-tap-highlight-color:rgba(0,0,0,0.5);}
+.image-area {float:left;}
+.image-box {float:left;}
+.navbar {margin-bottom: 20px;}
+.iill-input { font-size: 16px; }

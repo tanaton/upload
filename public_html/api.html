@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>かんたんろだAPI仕様</title>
+<meta name="format-detection" content="telephone=no">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="http{{if .TLS}}s{{end}}://{{.Host}}/favicon.ico">
+<link rel="icon" href="http{{if .TLS}}s{{end}}://{{.Host}}/favicon.ico">
+<link rel="stylesheet" href="http{{if .TLS}}s{{end}}://{{.Host}}/css/bootstrap-3.3.5.min.css">
+<link rel="stylesheet" href="http{{if .TLS}}s{{end}}://{{.Host}}/css/bootstrap-theme-3.3.5.min.css">
+<link rel="stylesheet" href="http{{if .TLS}}s{{end}}://{{.Host}}/css/default.css?20151122a">
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+	<div class="container">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="/">かんたんろだ</a>
+		</div>
+		<div id="navbar" class="collapse navbar-collapse">
+			<ul class="nav navbar-nav">
+				<li><a href="http://jbbs.shitaraba.net/bbs/read.cgi/internet/22074/1420633148/">掲示板</a></li>
+				<li><a href="/tos.html">利用規約</a></li>
+				<li><a href="http://goo.gl/forms/ONHnp6cLUY">お問い合わせ</a></li>
+			</ul>
+		</div><!--/.nav-collapse -->
+	</div>
+</nav>
+
+<div id="container" class="container">
+	<h1 class="page-header">かんたんろだAPI仕様</h1>
+
+	<div>
+		<h2>概要</h2>
+		<p>
+		かんたんろだに対して様々な操作を実行できます。<br>
+		パラメータの背景が緑色になっているものが必須項目になります。
+		</p>
+		<h2>かんたんろだAPIの使用</h2>
+		<p>APIの使用に特に制限はありません。かんたんろだをいじめる目的での使用は控えてください。</p>
+		<h2>目次</h2>
+		<ol>
+			<li><a href="#list">一覧の取得</a></li>
+			<li><a href="#upload">画像のアップロード</a></li>
+			<li><a href="#update">画像情報の更新</a></li>
+			<li><a href="#delete">画像の削除</a></li>
+		</ol>
+		<h2 id="list">1. 一覧の取得</h2>
+		<div>
+			<h3>1-1. リクエストURL</h3>
+			<p><code>/api/list</code></p>
+			<h3>1-2. メソッド</h3>
+			<p>GET</p>
+			<h3>1-3. パラメータ</h3>
+			<div>
+				<table class="table table-bordered">
+					<tr><th>Key</th><th>Type</th><th>Value</th></tr>
+					<tr><td>p</td><td>数値(10進数)</td><td>取得するページ番号を指定します。1以上の数値になります。</td></tr>
+					<tr>
+						<td>tag</td>
+						<td>文字列</td>
+						<td>
+							指定された文字列でタグ検索を行います。<br>
+							1つのtagに指定できるタグは1つです。<br>
+							tagはリクエストに複数含めることができます。
+						</td>
+					</tr>
+				</table>
+			</div>
+			<h3>1-4. レスポンス</h3>
+			<div>
+				<h4>1-4-1. 正常</h4>
+				<div>
+					<table class="table table-bordered">
+						<tr><th>要素</th><th>内容</th></tr>
+						<tr><td>ステータスコード</td><td>200</td></tr>
+						<tr><td>Content-Type</td><td>application/json</td></tr>
+						<tr>
+							<td>レスポンス内容</td>
+							<td>
+								<table class="table table-bordered">
+									<tr><th>メンバー</th><th>型</th><th>内容</th></tr>
+									<tr><td>Row</td><td>数値</td><td>総要素数です。タグ検索しない場合、閲覧可能な画像数になります。</td></tr>
+									<tr><td>PageMax</td><td>数値</td><td>最大ページ数です。</td></tr>
+									<tr><td>PageSize</td><td>数値</td><td>一つのページに含まれる要素数です。</td></tr>
+									<tr>
+										<td>ThumbPixelSize</td>
+										<td>数値</td>
+										<td>
+											サムネイルの表示希望サイズを返します。<br>
+											サムネイルは正方形を想定しているため、1辺のサイズのピクセル数が入っています。
+										</td>
+									</tr>
+									<tr><td>Tagmap</td><td>オブジェクト</td><td>タグ検索で指定されたタグがキーになったオブジェクトです。値は空になっています。</td></tr>
+									<tr><td>Oldtags</td><td>文字列</td><td>クエリ文字です。クライアントの処理をほんの少し楽にするために送っています。</td></tr>
+									<tr>
+										<td>List</td>
+										<td>オブジェクトの配列</td>
+										<td>
+											以下のオブジェクトが配列で最大PageMax個含まれています。
+											<table class="table table-bordered">
+												<tr><th>メンバー</th><th>型</th><th>内容</th></tr>
+												<tr><td>Id</td><td>文字列</td><td>画像IDです。</td></tr>
+												<tr><td>Ext</td><td>文字列</td><td>拡張子です。</td></tr>
+												<tr><td>Date</td><td>文字列</td><td>画像のアップロード時間です。</td></tr>
+												<tr><td>Size</td><td>数値</td><td>画像の元のファイルサイズです。</td></tr>
+												<tr><td>Width</td><td>数値</td><td>画像の幅です。</td></tr>
+												<tr><td>Height</td><td>数値</td><td>画像の高さです。</td></tr>
+												<tr><td>Desc</td><td>文字列</td><td>画像の説明です。</td></tr>
+												<tr><td>PassCode</td><td>真偽値</td><td>アップロード時にパスワードが入力された場合true、されてない場合falseになります。</td></tr>
+												<tr><td>Tags</td><td>配列</td><td>タグの配列です。タグが無い場合、nullになります。</td></tr>
+											</table>
+										</td>
+									</tr>
+									<tr>
+										<td>Pagination</td>
+										<td>オブジェクト</td>
+										<td>
+											ページ送り用の情報です。
+											<table class="table table-bordered">
+												<tr><th>メンバー</th><th>型</th><th>内容</th></tr>
+												<tr><td>Prev</td><td>数値</td><td>現在の前のページ番号です。</td></tr>
+												<tr><td>Next</td><td>数値</td><td>現在の次のページ番号です。</td></tr>
+												<tr><td>Now</td><td>数値</td><td>現在のページ番号です。</td></tr>
+												<tr><td>List</td><td>配列</td><td>ページ番号の配列です。</td></tr>
+											</table>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+				</div>
+				リクエストにIf-Modified-Sinceヘッダーが含まれている場合、ステータスコード304を返すこともあります。
+
+				<h4>1-4-2. 異常</h4>
+				<div>
+					<table class="table table-bordered">
+						<tr><th>ステータスコード</th><th>内容</th></tr>
+						<tr><td>204</td><td>データベースに接続できない場合。</td></tr>
+						<tr><td>405</td><td>GET以外でリクエストした場合。</td></tr>
+					</table>
+				</div>
+			</div>
+		</div>
+
+
+		<h2 id="upload">2. 画像のアップロード</h2>
+		<div>
+			<h3>2-1. リクエストURL</h3>
+			<p>
+			<code>/api/upload</code><br>
+			もしくは<br>
+			<code>/api/upload?jump=true</code><br>
+			もしくは<br>
+			<code>/api/upload?jump=image</code>
+			</p>
+			<h3>2-2. メソッド</h3>
+			<p><code>POST</code></p>
+			<h3>2-3. パラメータ</h3>
+			<div>
+				multipart/form-data形式で指定してください。
+				<table class="table table-bordered">
+					<tr><th>Key</th><th>Type</th><th>Value</th></tr>
+					<tr class="success"><td>uploadfile</td><td>ファイル</td><td>アップロードするファイル内容</td></tr>
+					<tr><td>passcode</td><td>文字列</td><td>画像情報の更新、削除を行う際に必要なパスワード。UTF8エンコーディング、255文字まで。</td></tr>
+					<tr><td>description</td><td>文字列</td><td>画像の説明文。UTF8エンコーディング、140文字まで。</td></tr>
+					<tr><td>tags</td><td>文字列</td><td>画像のタグ。半角スペース区切りで指定。UTF8エンコーディング、255文字まで。</td></tr>
+					<tr><td>delete_wait_minute</td><td>数値</td><td>時間経過による画像の自動削除機能。アップロード後からの経過時間（分単位）を1～50000の範囲で指定可能。デフォルトは削除無し（0）。</td></tr>
+					<tr>
+						<td>stamp</td>
+						<td>文字列</td>
+						<td>
+							アップロードした画像の上に特定の画像を描画します。
+							<table class="table table-bordered">
+								<tr><th>値</th><th>内容</th></tr>
+								<tr><td>pca_circle</td><td><a href="/omake/stamp/pca_circle.png">広告クリックお願いします。</a></td></tr>
+								<tr><td>pca_circle_yukisann</td><td><a href="/omake/stamp/pca_circle_yukisann.png">広告クリックお願いします。雪さん付き</a></td></tr>
+								<tr><td>tsks_character</td><td><a href="/omake/stamp/tsks_character.png">転載禁止 文字にインク</a></td></tr>
+								<tr><td>tsks_background</td><td><a href="/omake/stamp/tsks_background.png">転載禁止 背景にインク</a></td></tr>
+								<tr><td>adclick</td><td><a href="/omake/stamp/adclick.png" target="_blank">広告クリックにご協力下さい</a></td></tr>
+								<tr><td>afiblog</td><td><a href="/omake/stamp/afiblog.png" target="_blank">アフィブログ転載禁止</a></td></tr>
+								<tr><td>confidential</td><td><a href="/omake/stamp/confidential.png" target="_blank">CONFIDENTIAL (縁付き)</a></td></tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td>stamp_position</td>
+						<td>文字列</td>
+						<td>
+							stampの位置を指定します。stampが指定されていない場合、意味を持ちません。
+							<table class="table table-bordered">
+								<tr><th>値</th><th>内容</th></tr>
+								<tr><td>ul</td><td>左上（デフォルト）</td></tr>
+								<tr><td>ur</td><td>右上</td></tr>
+								<tr><td>cc</td><td>中央</td></tr>
+								<tr><td>ll</td><td>左下</td></tr>
+								<tr><td>lr</td><td>右下</td></tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td>thumb_change</td>
+						<td>文字列</td>
+						<td>
+							サムネイルを変更します。
+							<table class="table table-bordered">
+								<tr><th>値</th><th>内容</th></tr>
+								<tr><td>mosaic_proc</td><td>サムネイルをさらに縮小します。モザイク処理のような感じになります。</td></tr>
+								<tr><td>iill</td><td><a href="/omake/thumb/iill.jpg" target="_blank">かんたんろだのロゴ</a>に差し替えます。</td></tr>
+								<tr><td>gurotyu</td><td><a href="/omake/thumb/gurotyu.jpg" target="_blank">グロ注意画像</a>に差し替えます。</td></tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<h3>2-4. レスポンス</h3>
+			<div>
+				<h4>2-4-1. 正常</h4>
+				<div>
+					<strong>リクエストURLが「/api/upload」の場合</strong>
+					<p>
+					ステータスコード200を返します。<br>
+					ヘッダーに以下の情報が含まれます。<br>
+					<table class="table table-bordered">
+						<tr><th>ヘッダー</th><th></th><th>内容</th></tr>
+						<tr><td>X-Iill-FileID</td><td>数値(36進数)</td><td>画像IDです。</td></tr>
+						<tr><td>X-Iill-FileExt</td><td>文字列</td><td>拡張子です。</td></tr>
+					</table>
+					</p>
+					<strong>リクエストURLが「/api/upload?jump=true」の場合</strong>
+					<p>
+					ステータスコード303を返します。<br>
+					また、<a href="/">トップページ</a>にリダイレクトします。
+					</p>
+					<strong>リクエストURLが「/api/upload?jump=image」の場合</strong>
+					<p>
+					ステータスコード303を返します。<br>
+					また、アップロード完了した画像ファイルにリダイレクトします。
+					</p>
+				</div>
+				<h4>2-4-2. 異常</h4>
+				<div>
+					異常の場合はリクエストURLに関わらず共通です。<br>
+					<table class="table table-bordered">
+						<tr><th>ステータスコード</th><th>内容</th></tr>
+						<tr>
+							<td>400</td>
+							<td>
+								multipart/form-data形式ではない場合。<br>
+								データ内のUTF8文字列が変な場合。<br>
+								などの変なリクエストの場合。
+							</td>
+						</tr>
+						<tr><td>405</td><td>POST以外でリクエストした場合。</td></tr>
+						<tr><td>413</td><td>転送データが8MBを超えた場合。</td></tr>
+						<tr>
+							<td>415</td>
+							<td>
+								ファイルのインターネットメディアタイプ(MIMEType)がかんたんろだ側で対応していない。<br>
+								または、画像をエンコード出来なかった場合。<br>
+								など
+							</td>
+						</tr>
+						<tr><td>500</td><td>アップロードが途中で途切れたとか、面倒くさい異常の場合。</td></tr>
+						<tr><td>503</td><td>時間かかりすぎな場合。</td></tr>
+					</table>
+				</div>
+			</div>
+		</div>
+
+
+		<h2 id="update">3. 画像情報の更新</h2>
+		<div>
+			<h3>3-1. リクエストURL</h3>
+			<p>
+			<code>/api/update</code><br>
+			もしくは<br>
+			<code>/api/update?jump=true</code>
+			</p>
+			<h3>3-2. メソッド</h3>
+			<p><code>POST</code></p>
+			<h3>3-3. パラメータ</h3>
+			<div>
+				<table class="table table-bordered">
+					<tr><th>Key</th><th>Type</th><th>Value</th></tr>
+					<tr class="success"><td>id</td><td>数値(36進数)</td><td>36進数で表された画像ID。</td></tr>
+					<tr class="success"><td>key</td><td>文字列</td><td>アップロード時に指定したパスワード。</td></tr>
+					<tr><td>passcode</td><td>文字列</td><td>画像情報の更新、削除を行う際に必要なパスワード。UTF8エンコーディング、255文字まで。</td></tr>
+					<tr><td>description</td><td>文字列</td><td>画像の説明文。UTF8エンコーディング、140文字まで。</td></tr>
+					<tr><td>tags</td><td>文字列</td><td>画像のタグ。半角スペース区切りで指定。UTF8エンコーディング、255文字まで。</td></tr>
+				</table>
+			</div>
+			<h3>3-4. レスポンス</h3>
+			<div>
+				<h4>3-4-1. 正常</h4>
+				<div>
+					<strong>リクエストURLが「/api/update」の場合</strong>
+					<p>
+					ステータスコード200を返します。
+					</p>
+					<strong>リクエストURLが「/api/update?jump=true」の場合</strong>
+					<p>
+					ステータスコード303を返します。<br>
+					また、<a href="/">トップページ</a>にリダイレクトします。
+					</p>
+				</div>
+				<h4>3-4-2. 異常</h4>
+				<div>
+					<table class="table table-bordered">
+						<tr><th>ステータスコード</th><th>内容</th></tr>
+						<tr>
+							<td>400</td>
+							<td>
+								multipart/form-data形式ではない場合。<br>
+								データ内のUTF8文字列が変な場合。<br>
+								などの変なリクエストの場合。
+							</td>
+						</tr>
+						<tr><td>405</td><td>POST以外でリクエストした場合。</td></tr>
+						<tr><td>413</td><td>転送データが8MBを超えた場合。</td></tr>
+						<tr>
+							<td>415</td>
+							<td>
+								ファイルのインターネットメディアタイプ(MIMEType)がかんたんろだ側で対応していない。<br>
+								または、画像をエンコード出来なかった場合。<br>
+								など
+							</td>
+						</tr>
+						<tr><td>500</td><td>アップロードが途中で途切れたとか、面倒くさい異常の場合。</td></tr>
+						<tr><td>503</td><td>時間かかりすぎな場合。</td></tr>
+					</table>
+				</div>
+			</div>
+		</div>
+
+
+		<h2 id="delete">4. 画像の削除</h2>
+		<div>
+			<h3>4-1. リクエストURL</h3>
+			<p><code>/api/delete</code></p>
+			<h3>4-2. メソッド</h3>
+			<p><code>GET</code></p>
+			<h3>4-3. パラメータ</h3>
+			<div>
+				<table class="table table-bordered">
+					<tr><th>Key</th><th>Type</th><th>Value</th></tr>
+					<tr class="success"><td>id</td><td>数値(36進数)</td><td>36進数で表された画像番号。</td></tr>
+					<tr class="success"><td>passcode</td><td>文字列</td><td>アップロード時に入力したパスワード。UTF8エンコーディング、255文字まで。</td></tr>
+					<tr><td>jump</td><td>文字列</td><td>trueの場合、削除が正常に終了した際、TOPページに303でリダイレクトする。</td></tr>
+				</table>
+			</div>
+			<h3>4-4. レスポンス</h3>
+			<div>
+				<h4>4-4-1. 正常</h4>
+				<div>
+					ステータスコード200が返されます。<br>
+					または、リクエストにjump=trueが含まれる場合、<a href="/">トップページ</a>にリダイレクトします。
+				</div>
+				<h4>4-4-2. 異常</h4>
+				<div>
+					<table class="table table-bordered">
+						<tr><th>ステータスコード</th><th>内容</th></tr>
+						<tr>
+							<td>400</td>
+							<td>
+								パスワードが違う場合。<br>
+								データベース操作に失敗した場合。<br>
+								など
+							</td>
+						</tr>
+						<tr><td>405</td><td>GET以外でリクエストした場合。</td></tr>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--[if lt IE 9]>
+<script src="/js/ie/html5shiv.min.js"></script>
+<script src="/js/ie/respond.min.js"></script>
+<![endif]-->
+<script src="/js/lib/jquery-1.11.3.min.js"></script>
+<script src="/js/lib/bootstrap-3.3.5.min.js"></script>
+</body>
+</html>

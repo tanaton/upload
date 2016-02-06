@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>画像コメント解析くん - かんたんろだ</title>
+<meta name="format-detection" content="telephone=no">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="http{{if .TLS}}s{{end}}://{{.Host}}/favicon.ico">
+<link rel="icon" href="http{{if .TLS}}s{{end}}://{{.Host}}/favicon.ico">
+<link rel="stylesheet" href="http{{if .TLS}}s{{end}}://{{.Host}}/css/bootstrap-3.3.5.min.css">
+<link rel="stylesheet" href="http{{if .TLS}}s{{end}}://{{.Host}}/css/bootstrap-theme-3.3.5.min.css">
+<link rel="stylesheet" href="http{{if .TLS}}s{{end}}://{{.Host}}/css/default.css?20151122a">
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+	<div class="container">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="/">かんたんろだ</a>
+		</div>
+		<div id="navbar" class="collapse navbar-collapse">
+			<ul class="nav navbar-nav">
+				<li><a href="http://jbbs.shitaraba.net/bbs/read.cgi/internet/22074/1420633148/">掲示板</a></li>
+				<li><a href="/tos.html">利用規約</a></li>
+				<li><a href="http://goo.gl/forms/ONHnp6cLUY">お問い合わせ</a></li>
+			</ul>
+		</div><!--/.nav-collapse -->
+	</div>
+</nav>
+
+<div id="container" class="container">
+	<h1 class="page-header">画像コメント解析くん</h1>
+
+	<div>
+		<h2>なにこれ？</h2>
+		<p>
+		画像ファイルを解析して、画像ファイルに埋め込まれたコメント情報を見えるようにします。
+		</p>
+		<h2>使い方</h2>
+		<p>
+		このページに画像ファイルをドロップするか、以下のフォームで画像を選択すると解析が始まります。<br>
+		</p>
+		<form role="form">
+			<div class="form-group">
+				<label for="upform-input-file">ファイル指定</label>  <a href="#" data-toggle="tooltip" title="解析する画像ファイルを指定します。複数指定できます。"><span class="glyphicon glyphicon-info-sign"></span></a>
+				<input type="file" name="uploadfile" value="ファイル" class="form-control" id="input-file" accept="image/*" required>
+			</div>
+		</form>
+		<h2>出力結果</h2>
+		<div id="list">
+			ここに結果が表示されます。
+		</div>
+		<h2>注意事項</h2>
+		<p>
+		Javascriptを使用しています。（Chrome 42.0.2311.135 m (64-bit)、Firefox 37.0.2で動作確認済み。）<br>
+		各種画像形式（jpeg/png/gif/tiff/webp）に対応していますが、お使いのブラウザが対応していない画像は解析できません。
+		</p>
+	</div>
+</div>
+
+<!--[if lt IE 9]>
+<script src="/js/ie/html5shiv.min.js"></script>
+<script src="/js/ie/respond.min.js"></script>
+<![endif]-->
+<script src="/js/lib/jquery-1.11.3.min.js"></script>
+<script src="/js/lib/bootstrap-3.3.5.min.js"></script>
+<script src="/js/lib/zlib.min.js"></script>
+<script src="/js/comment.js?20151122a"></script>
+</body>
+</html>
