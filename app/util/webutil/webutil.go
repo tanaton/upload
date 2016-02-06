@@ -135,16 +135,18 @@ func Dispose(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Print(resw http.ResponseWriter, r *http.Request, out Output) (int, int64, error) {
-	var err error
+func Print(resw http.ResponseWriter, r *http.Request, out Output) (code int, size int64, err error) {
 	// ヘッダー設定
 	wc, ws := PreOutput(resw, r, out)
-	defer wc.Close()
+	defer func() {
+		wc.Close()
+		size = ws.Size()
+	}()
 	// ボディ出力
 	if r.Method != "HEAD" && out.Reader != nil {
 		_, err = io.Copy(wc, out.Reader)
 	}
-	return out.Code, ws.Size(), err
+	return out.Code, 0, err
 }
 
 func PreOutput(resw http.ResponseWriter, r *http.Request, out Output) (io.WriteCloser, Size) {

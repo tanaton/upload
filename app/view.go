@@ -99,10 +99,13 @@ func IndexHtml(w http.ResponseWriter, r *http.Request, tls bool) (code int, size
 	data.Pd, err = GetPage(r)
 
 	wc, ws := webutil.PreOutput(w, r, out)
-	defer wc.Close()
+	defer func() {
+		wc.Close()
+		size = ws.Size()
+	}()
 	//dashboardTempl := template.Must(template.ParseFiles("template/dashboard.templ"))
 	dashboardTempl.Execute(wc, data)
-	return out.Code, ws.Size(), nil
+	return out.Code, 0, nil
 }
 
 func Find(m map[string]struct{}, key string) bool {
@@ -124,7 +127,10 @@ func NormalHtml(w http.ResponseWriter, r *http.Request, tls bool) (code int, siz
 		Host: conf.Conf.Host,
 	}
 	wc, ws := webutil.PreOutput(w, r, out)
-	defer wc.Close()
+	defer func() {
+		wc.Close()
+		size = ws.Size()
+	}()
 
 	upath := r.URL.Path
 	if !strings.HasPrefix(upath, "/") {
@@ -151,7 +157,7 @@ func NormalHtml(w http.ResponseWriter, r *http.Request, tls bool) (code int, siz
 	}
 	//dashboardTempl := template.Must(template.ParseFiles("template/dashboard.templ"))
 	t.Execute(wc, data)
-	return out.Code, ws.Size(), nil
+	return out.Code, 0, nil
 }
 
 func ViewerHtml(w http.ResponseWriter, r *http.Request, tls bool) (code int, size int64, err error) {
@@ -185,8 +191,11 @@ func ViewerHtml(w http.ResponseWriter, r *http.Request, tls bool) (code int, siz
 		Num:      num,
 	}
 	wc, ws := webutil.PreOutput(w, r, out)
-	defer wc.Close()
+	defer func() {
+		wc.Close()
+		size = ws.Size()
+	}()
 	//dziviewerTempl = template.Must(template.ParseFiles("template/dziviewer.templ"))
 	dziviewerTempl.Execute(wc, data)
-	return out.Code, ws.Size(), nil
+	return out.Code, 0, nil
 }
