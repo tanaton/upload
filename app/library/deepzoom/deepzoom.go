@@ -31,6 +31,7 @@ import (
 	"../../img"
 	"../../util"
 	"bufio"
+	"errors"
 	"fmt"
 	"github.com/nfnt/resize"
 	"image"
@@ -44,7 +45,10 @@ import (
 	"strings"
 )
 
-const Ext = "dzi"
+const (
+	Ext   = "dzi"
+	LvMax = 14
+)
 
 type Deepzoom struct {
 	ts int
@@ -109,6 +113,9 @@ func (dz *Deepzoom) MakeTiles(im image.Image, num int64) error {
 	}
 	// calculate the number of levels
 	numLevels := dz.getNumLevels(maxDimension)
+	if numLevels > LvMax {
+		return errors.New("画像サイズが大きいため、DZImageの生成を中止")
+	}
 
 	const parallel = 8
 	var reterr error

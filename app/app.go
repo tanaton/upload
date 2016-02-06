@@ -118,7 +118,7 @@ LOOP:
 			dp := util.CreateDataPath(it.num, ext)
 			im, err := img.Decode(dp, it.imgt)
 			if err != nil {
-				continue
+				break
 			}
 			dz := deepzoom.NewDeepZoom(256, true)
 			dz.MakeTiles(im, it.num)
