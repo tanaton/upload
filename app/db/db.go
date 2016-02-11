@@ -27,6 +27,7 @@ package db
 
 import (
 	"../conf"
+	"../library/deepzoom"
 	"../util"
 	"../util/webutil"
 	"database/sql"
@@ -92,6 +93,7 @@ type Item struct {
 	Height   int
 	Desc     string
 	PassCode bool
+	Dzi      bool
 	Tags     []string
 }
 
@@ -260,6 +262,7 @@ func GetPageTags(offset, limit int64, tags map[string]struct{}) ([]Item, int64, 
 		if tags != "" {
 			it.Tags = strings.Split(tags, " ")
 		}
+		it.Dzi = deepzoom.CheckSize(it.Width, it.Height)
 		list = append(list, it)
 	}
 	if err = rows.Err(); err != nil {

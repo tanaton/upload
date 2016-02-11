@@ -74,10 +74,8 @@
 				<img src="{{$this.ThumbUrl}}{{$it.Id}}.jpg" id="img{{$it.Id}}" width="{{$ts}}" height="{{$ts}}" alt="{{$it.Desc}}">
 			</a>
 			<div class="caption hide" id="img-caption-{{$it.Id}}">
-				{{if lt $it.Height 16384}}
-				{{if lt $it.Width 16384}}
+				{{if $it.Dzi}}
 				<p><span style="color:red;">[new]</span> <a href="{{$this.ViewerUrl}}{{$it.Id}}" target="_blank">画像ビューアで開く</a></p>
-				{{end}}
 				{{end}}
 				<p>コメント：{{$it.Desc}}</p>
 				<p>画像サイズ：{{$it.Height}}x{{$it.Width}}</p>
@@ -379,6 +377,6 @@
 <![endif]-->
 <script src="/js/lib/jquery-1.11.3.min.js"></script>
 <script src="/js/lib/bootstrap-3.3.5.min.js"></script>
-<script src="/js/dashboard.js?20151122a"></script>
+<script src="/js/dashboard.js?20160210a"></script>
 </body>
 </html>

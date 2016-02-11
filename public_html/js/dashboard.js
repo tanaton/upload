@@ -472,6 +472,7 @@ function insertImage(data, page){
 			+ '<img src="' + thumbUrl + it.Id + '.jpg" id="img' + it.Id + '" width="' + ts + '" height="' + ts + '" alt="' + it.Desc + '">'
 			+ '</a>'
 			+ '<div class="caption hide" id="img-caption-' + it.Id + '">'
+			+ (it.Dzi ? '<p><span style="color:red;">[new]</span> <a href="' + viewerUrl + it.Id + '" target="_blank">画像ビューアで開く</a></p>' : '')
 			+ '<p>コメント：' + it.Desc + '</p>'
 			+ '<p>画像サイズ：' + it.Height + 'x' + it.Width + '</p>'
 			+ '<p>データサイズ：' + it.Size + '</p>'

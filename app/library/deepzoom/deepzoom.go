@@ -46,8 +46,9 @@ import (
 )
 
 const (
-	Ext   = "dzi"
-	LvMax = 14
+	Ext      = "dzi"
+	PixelMax = 500000000
+	LevelMax = 15
 )
 
 type Deepzoom struct {
@@ -93,6 +94,10 @@ func DeleteTiles(num int64) error {
 	return nil
 }
 
+func CheckSize(w, h int) bool {
+	return (uint64(w)*uint64(h)) < PixelMax && w < (2<<LevelMax) && h < (2<<LevelMax)
+}
+
 func (dz *Deepzoom) MakeTiles(im image.Image, num int64) error {
 	sp := CreateDziPathSystem(num)
 	dir := strings.TrimSuffix(sp, "."+Ext) + "_files"
@@ -104,6 +109,9 @@ func (dz *Deepzoom) MakeTiles(im image.Image, num int64) error {
 	rect := im.Bounds()
 	height := rect.Max.Y
 	width := rect.Max.X
+	if CheckSize(width, height) == false {
+		return errors.New("画像サイズが大きすぎるため、DZImageの生成を中止")
+	}
 
 	var maxDimension int
 	if width > height {
@@ -113,14 +121,12 @@ func (dz *Deepzoom) MakeTiles(im image.Image, num int64) error {
 	}
 	// calculate the number of levels
 	numLevels := dz.getNumLevels(maxDimension)
-	if numLevels > LvMax {
-		return errors.New("画像サイズが大きいため、DZImageの生成を中止")
-	}
 
 	const parallel = 8
 	var reterr error
 	sync := make(chan struct{}, parallel)
-	for level := numLevels - 1; level >= 0; level-- {
+	maxLevel := numLevels - 1
+	for level := maxLevel; level >= 0; level-- {
 		level_dir := filepath.Join(dir, strconv.Itoa(level))
 		reterr = util.MakedirAll(level_dir)
 		if reterr != nil {
@@ -130,8 +136,24 @@ func (dz *Deepzoom) MakeTiles(im image.Image, num int64) error {
 		scale := dz.getScaleForLevel(numLevels, level)
 		// calculate dimensions for levels
 		w, h := dz.getDimensionForLevel(width, height, scale)
+
+		var tmpimg image.Image
+		switch maxLevel - level {
+		case 0:
+			// 縮小無し
+			tmpimg = im
+		case 1, 2, 3:
+			// くっきり縮小
+			tmpimg = resize.Resize(uint(w), uint(h), im, resize.Bicubic)
+		case 4, 5, 6:
+			// ぼんやり縮小
+			tmpimg = resize.Resize(uint(w), uint(h), im, resize.Bilinear)
+		default:
+			// 適当に縮小
+			tmpimg = resize.Resize(uint(w), uint(h), im, resize.NearestNeighbor)
+		}
 		// create tiles for level
-		reterr = dz.createLevelTiles(sync, w, h, level, level_dir, im)
+		reterr = dz.createLevelTiles(sync, w, h, level, level_dir, tmpimg)
 		if reterr != nil {
 			break
 		}
@@ -172,8 +194,6 @@ func (dz *Deepzoom) getDimensionForLevel(width, height int, scale float64) (int,
 }
 
 func (dz *Deepzoom) createLevelTiles(sync chan struct{}, width, height, level int, dir string, im image.Image) error {
-	// create new image at scaled dimensions
-	im = resize.Resize(uint(width), uint(height), im, resize.Bicubic)
 	// get column and row count for level
 	columns, rows := dz.getNumTiles(width, height)
 	// インターフェースを取得
