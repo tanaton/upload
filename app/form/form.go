@@ -96,6 +96,11 @@ func NewError(code int, msg string) *Error {
 }
 
 func ReadForm(req *http.Request, maxMemory int64) (retform *Form, formerr *Error) {
+	if req.ContentLength > maxMemory {
+		// Content-Lengthが設定されている場合、長さを確認する
+		// 413
+		return nil, NewError(http.StatusRequestEntityTooLarge, "upload data too large")
+	}
 	v := req.Header.Get("Content-Type")
 	if v == "" {
 		// 400
@@ -106,14 +111,12 @@ func ReadForm(req *http.Request, maxMemory int64) (retform *Form, formerr *Error
 		// 400
 		return nil, NewError(http.StatusBadRequest, "invalid Content-Type")
 	}
-	cl, clerr := strconv.ParseInt(req.Header.Get("Content-Length"), 10, 32)
-	if clerr != nil || cl > maxMemory {
-		// Content-Lengthが設定されている場合、長さを確認する
-		// 413
-		return nil, NewError(http.StatusRequestEntityTooLarge, "upload data too large")
+	boundary, ok := params["boundary"]
+	if !ok {
+		// 400
+		return nil, NewError(http.StatusBadRequest, "boundary not found")
 	}
-
-	mr := multipart.NewReader(req.Body, params["boundary"])
+	mr := multipart.NewReader(req.Body, boundary)
 	f := &Form{
 		Value:    make(map[string]string),
 		IntValue: make(map[string]int64),
