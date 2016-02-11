@@ -83,6 +83,9 @@ func IndexHtml(w http.ResponseWriter, r *http.Request, tls bool) (code int, size
 
 	// ヘッダー出力
 	out.Header.Set("Content-Type", "text/html; charset=utf-8")
+	if tls {
+		out.Header.Set("Strict-Transport-Security", "max-age="+conf.OneYearSecStr)
+	}
 
 	data := &IndexData{
 		DefaultData: DefaultData{
@@ -121,6 +124,9 @@ func NormalHtml(w http.ResponseWriter, r *http.Request, tls bool) (code int, siz
 	}
 	// ヘッダー出力
 	out.Header.Set("Content-Type", "text/html; charset=utf-8")
+	if tls {
+		out.Header.Set("Strict-Transport-Security", "max-age="+conf.OneYearSecStr)
+	}
 
 	data := &DefaultData{
 		TLS:  tls,
@@ -181,6 +187,10 @@ func ViewerHtml(w http.ResponseWriter, r *http.Request, tls bool) (code int, siz
 
 	// ヘッダー出力
 	out.Header.Set("Content-Type", "text/html; charset=utf-8")
+	if tls {
+		out.Header.Set("Strict-Transport-Security", "max-age="+conf.OneYearSecStr)
+	}
+
 	data := &DziData{
 		DefaultData: DefaultData{
 			TLS:  tls,

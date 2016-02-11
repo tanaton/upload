@@ -26,7 +26,6 @@ package webutil
 import (
 	"../../conf"
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -110,7 +109,7 @@ func NotFoundImage(w http.ResponseWriter, r *http.Request) (int, int64, error) {
 	w.Header().Set("Content-Type", "image/png")
 	w.Header().Set("Last-Modified", CreateModString(now))
 	w.Header().Set("Expires", CreateModString(now.Add(conf.OneYearSec*time.Second)))
-	w.Header().Set("Cache-Control", "public, max-age="+strconv.Itoa(conf.OneYearSec))
+	w.Header().Set("Cache-Control", "public, max-age="+conf.OneYearSecStr)
 	w.WriteHeader(http.StatusNotFound)
 	n, err := w.Write(imageNotFound)
 	return http.StatusNotFound, int64(n), err

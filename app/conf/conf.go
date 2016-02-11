@@ -33,8 +33,9 @@ import (
 
 // 設定一覧
 const (
-	Ver        = "0.06"
-	OneYearSec = 31104000 // だいたい一年
+	Ver           = "0.06"
+	OneYearSec    = 31104000   // だいたい一年
+	OneYearSecStr = "31104000" // だいたい一年
 )
 
 type Config struct {

@@ -35,7 +35,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 )
 
@@ -63,7 +62,7 @@ func Download(w http.ResponseWriter, r *http.Request, numstr, ext string) (code 
 	w.Header().Set("Expires", webutil.CreateModString(time.Now().Add(conf.OneYearSec*time.Second)))
 	// プロキシがキャッシュを共有しないようにする
 	// ついでに、通信経路での変換や、部分的なキャッシュを防止する
-	w.Header().Set("Cache-Control", "private, no-transform, max-age="+strconv.Itoa(conf.OneYearSec))
+	w.Header().Set("Cache-Control", "private, no-transform, max-age="+conf.OneYearSecStr)
 	if r.Method != "HEAD" {
 		fp, rerr := os.Open(path)
 		if rerr != nil {
@@ -118,7 +117,7 @@ func DownloadThumb(w http.ResponseWriter, r *http.Request, numstr string) (code 
 	// ヘッダーの設定
 	w.Header().Set("Last-Modified", webutil.CreateModString(mod))
 	w.Header().Set("Expires", webutil.CreateModString(time.Now().Add(conf.OneYearSec*time.Second)))
-	w.Header().Set("Cache-Control", "public, max-age="+strconv.Itoa(conf.OneYearSec))
+	w.Header().Set("Cache-Control", "public, max-age="+conf.OneYearSecStr)
 	if r.Method != "HEAD" {
 		fp, rerr := os.Open(path)
 		if rerr != nil {
