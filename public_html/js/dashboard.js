@@ -38,6 +38,7 @@ var userAgent = {
 var hidePopover;
 var imageUrl;
 var thumbUrl;
+var viewerUrl;
 if("https:" === document.location.protocol){
 	imageUrl = 'https://kntn.org/i/';
 	thumbUrl = 'https://kntn.org/t/';
@@ -45,6 +46,7 @@ if("https:" === document.location.protocol){
 	imageUrl = 'http://i.kntn.org/';
 	thumbUrl = 'http://t.kntn.org/';
 }
+viewerUrl = 'https://kntn.org/v/';
 
 hidePopover = (function(){
 	var wait = true;

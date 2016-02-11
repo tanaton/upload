@@ -64,22 +64,13 @@ var dziviewerTempl = template.Must(template.ParseFiles("template/dziviewer.templ
 var normalTempls = template.New("")
 
 func IndexHtml(w http.ResponseWriter, r *http.Request, tls bool) (code int, size int64, err error) {
-	var iu string
-	var tu string
-	var vu string
 	var out webutil.Output
 	out.Code = http.StatusOK
 	out.Header = http.Header{}
 	out.ZFlag = true
-	if tls {
-		iu = "https://" + conf.Conf.Host + "/i/"
-		tu = "https://" + conf.Conf.Host + "/t/"
-		vu = "https://" + conf.Conf.Host + "/v/"
-	} else {
-		iu = "http://" + conf.Conf.ImageHost + "/"
-		tu = "http://" + conf.Conf.ThumbHost + "/"
-		vu = "http://" + conf.Conf.Host + "/v/"
-	}
+	iu := "https://" + conf.Conf.Host + "/i/"
+	tu := "https://" + conf.Conf.Host + "/t/"
+	vu := "https://" + conf.Conf.Host + "/v/"
 
 	// ヘッダー出力
 	out.Header.Set("Content-Type", "text/html; charset=utf-8")
