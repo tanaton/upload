@@ -72,12 +72,12 @@ func convert(p string) {
 		if err != nil {
 			continue
 		}
-		im, err := img.Decode(filepath.Join(p, filename), t)
-		if err != nil {
-			continue
-		}
 		dzip := deepzoom.CreateDziPathSystem(num)
 		if _, err := os.Stat(dzip); err != nil {
+			im, err := img.Decode(filepath.Join(p, filename), t)
+			if err != nil {
+				continue
+			}
 			rect := im.Bounds()
 			h := rect.Max.Y
 			w := rect.Max.X
