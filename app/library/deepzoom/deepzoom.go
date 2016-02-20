@@ -167,7 +167,7 @@ func (dz *Deepzoom) MakeTiles(im image.Image, num int64) error {
 		return reterr
 	}
 
-	wfp, err := os.OpenFile(sp, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
+	wfp, err := os.OpenFile(sp, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
 	if err != nil {
 		return err
 	}
@@ -211,7 +211,7 @@ func (dz *Deepzoom) createLevelTiles(sync chan struct{}, width, height, level in
 				tile_file := fmt.Sprintf("%d_%d.jpg", column, row)
 				x, y, w, h := dz.getTileBounds(level, column, row, width, height)
 				tp := filepath.Join(dir, tile_file)
-				wfp, err := os.OpenFile(tp, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
+				wfp, err := os.OpenFile(tp, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
 				if err != nil {
 					// TODO:エラーを拾う良い方法を考える
 					return

@@ -211,7 +211,7 @@ func (mc multiCloser) Close() (err error) {
 func MakedirAll(p string) error {
 	if _, err := os.Stat(p); err != nil {
 		// フォルダが無いので作る
-		if err := os.MkdirAll(p, 0777); err != nil {
+		if err := os.MkdirAll(p, 0666); err != nil {
 			return err
 		}
 	}
