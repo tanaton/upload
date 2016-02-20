@@ -28,7 +28,6 @@ import (
 	"./app/conf"
 	"./app/util"
 	"./app/util/webutil"
-	"golang.org/x/net/http2"
 	"log"
 	"net/http"
 	"path"
@@ -65,7 +64,6 @@ func main() {
 	log.Printf("listen start %s\n", h1s.Addr)
 	// サーバ起動
 	go func() {
-		http2.ConfigureServer(h2s, nil)
 		log.Println(h2s.ListenAndServeTLS(conf.Conf.SslCertPath, conf.Conf.SslPrivkeyPath))
 	}()
 	log.Fatal(h1s.ListenAndServe())

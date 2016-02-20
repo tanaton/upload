@@ -25,7 +25,7 @@
 			<button type="button" class="btn btn-primary navbar-btn" data-toggle="modal" data-target="#upform">
 				アップロードする
 			</button>
-			<a class="navbar-brand" href="http{{if .TLS}}s{{end}}://{{.Host}}/">かんたんろだ</a>
+			<a class="navbar-brand" href="https://{{.Host}}/">かんたんろだ</a>
 		</div>
 		<div id="navbar" class="collapse navbar-collapse">
 			<ul class="nav navbar-nav">
@@ -35,13 +35,13 @@
 						<span class="caret"></span>
 					</a>
 					<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-						<li><a href="http{{if .TLS}}s{{end}}://{{.Host}}/api.html">API仕様</a></li>
-						<li><a href="http{{if .TLS}}s{{end}}://{{.Host}}/tool/comment.html">画像コメント解析くん</a></li>
-						<li><a href="http{{if .TLS}}s{{end}}://{{.Host}}/tool/sharex.html">ShareX</a></li>
+						<li><a href="https://{{.Host}}/api.html">API仕様</a></li>
+						<li><a href="https://{{.Host}}/tool/comment.html">画像コメント解析くん</a></li>
+						<li><a href="https://{{.Host}}/tool/sharex.html">ShareX</a></li>
 					</ul>
 				</li>
 				<li><a href="http://jbbs.shitaraba.net/bbs/read.cgi/internet/22074/1420633148/">掲示板</a></li>
-				<li><a href="http{{if .TLS}}s{{end}}://{{.Host}}/tos.html">利用規約</a></li>
+				<li><a href="https://{{.Host}}/tos.html">利用規約</a></li>
 				<li><a href="http://goo.gl/forms/ONHnp6cLUY">お問い合わせ</a></li>
 			</ul>
 		</div><!--/.nav-collapse -->
@@ -50,23 +50,21 @@
 
 <div id="container" class="container">
 	<div class="page-header">
-{{if .TLS}}{{else}}
-		<div class="alert alert-success" role="alert">
-			2015/11/20 <a href="https://kntn.org/" data-toggle="tooltip" title="暗号化通信とHTTP2に対応したかんたんろだです。">かんたんろだ</a>にHTTPS（HTTP2）で接続できるようになりました。
+		<div class="alert alert-info" role="alert">
+			2016/02/17 画像ビューア機能を実験的に用意しました。<a href="https://kntn.org/v/1ex">こんな感じ</a>です。
 			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 				<span aria-hidden="true">&times;</span>
 			</button>
 		</div>
-{{end}}
 		<div class="drag-and-drop">ドラッグ＆ドロップで簡単アップロード</div>
 	</div>
 
-	{{$this := .}}
-	{{$pl := .Pd.List}}
-	{{$pt := .Pd.Tagmap}}
-	{{$ts := .Pd.ThumbPixelSize}}
-	{{$ot := .Pd.Oldtags}}
-	{{$pn := .Pd.Pagination}}
+	{{$this := . -}}
+	{{$pl := .Pd.List -}}
+	{{$pt := .Pd.Tagmap -}}
+	{{$ts := .Pd.ThumbPixelSize -}}
+	{{$ot := .Pd.Oldtags -}}
+	{{$pn := .Pd.Pagination -}}
 	<div id="image-main-area" class="clearfix" data-pagemax="{{.Pd.PageMax}}">
 		{{range $it := $pl}}
 		<div id="b{{$it.Id}}" class="image-box" data-imgid="{{$it.Id}}" data-toggle="popover" title="{{$this.ImageUrl}}{{$it.Id}}.{{$it.Ext}}">
@@ -74,56 +72,56 @@
 				<img src="{{$this.ThumbUrl}}{{$it.Id}}.jpg" id="img{{$it.Id}}" width="{{$ts}}" height="{{$ts}}" alt="{{$it.Desc}}">
 			</a>
 			<div class="caption hide" id="img-caption-{{$it.Id}}">
-				{{if $it.Dzi}}
+				{{if $it.Dzi -}}
 				<p><span style="color:red;">[new]</span> <a href="{{$this.ViewerUrl}}{{$it.Id}}" target="_blank">画像ビューアで開く</a></p>
-				{{end}}
+				{{end -}}
 				<p>コメント：{{$it.Desc}}</p>
 				<p>画像サイズ：{{$it.Height}}x{{$it.Width}}</p>
 				<p>データサイズ：{{$it.Size}}</p>
 				<p>アップロード時間：{{$it.Date | html}}</p>
-				{{if ne 0 (len $it.Tags)}}
+				{{if ne 0 (len $it.Tags) -}}
 				<p>タグ：
-				{{range $val := $it.Tags}}
-				{{if call $this.Find $pt $val}}
-				<a href="http{{if $this.TLS}}s{{end}}://{{$this.Host}}/?{{$ot}}">{{$val | html}}</a>
-				{{else}}
-				<a href="http{{if $this.TLS}}s{{end}}://{{$this.Host}}/?tag={{$val | urlquery}}{{if ne $ot ``}}&{{$ot}}{{end}}">{{$val | html}}</a>
-				{{end}}
-				{{else}}
-				{{end}}
+				{{range $val := $it.Tags -}}
+				{{if call $this.Find $pt $val -}}
+				<a href="https://{{$this.Host}}/?{{$ot}}">{{$val | html}}</a>
+				{{else -}}
+				<a href="https://{{$this.Host}}/?tag={{$val | urlquery}}{{if ne $ot ``}}&{{$ot}}{{end}}">{{$val | html}}</a>
+				{{end -}}
+				{{else -}}
+				{{end -}}
 				</p>
-				{{end}}
-				{{if $it.PassCode}}
+				{{end -}}
+				{{if $it.PassCode -}}
 				<p>
 				[<a href="#update" data-toggle="modal" data-target="#update" data-imgid="{{$it.Id}}">編集する</a>]
 				[<a href="#delete" data-toggle="modal" data-target="#delete" data-imgid="{{$it.Id}}">削除する</a>]
 				</p>
-				{{end}}
+				{{end -}}
 			</div>
 		</div>
-		{{else}}
-		{{end}}
+		{{else -}}
+		{{end -}}
 	</div>
 
 	<nav>
 		<ul class="pagination pagination-lg">
-			{{if ne $pn.Prev 0}}
-			<li><a href="http{{if $this.TLS}}s{{end}}://{{$this.Host}}/?{{if ne $ot ``}}{{$ot}}&{{end}}p={{$pn.Prev}}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-			{{else}}
+			{{if ne $pn.Prev 0 -}}
+			<li><a href="https://{{$this.Host}}/?{{if ne $ot ``}}{{$ot}}&{{end}}p={{$pn.Prev}}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+			{{else -}}
 			<li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-			{{end}}
-			{{range $it := $pn.List}}
-			{{if eq $pn.Now $it}}
-			<li class="active"><a href="http{{if $this.TLS}}s{{end}}://{{$this.Host}}/?{{if ne $ot ``}}{{$ot}}&{{end}}p={{$it}}">{{$it}} <span class="sr-only">(current)</span></a></li>
-			{{else}}
-			<li><a href="http{{if $this.TLS}}s{{end}}://{{$this.Host}}/?{{if ne $ot ``}}{{$ot}}&{{end}}p={{$it}}">{{$it}}</a></li>
-			{{end}}
-			{{end}}
-			{{if ne $pn.Next 0}}
-			<li><a href="http{{if $this.TLS}}s{{end}}://{{$this.Host}}/?{{if ne $ot ``}}{{$ot}}&{{end}}p={{$pn.Next}}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
-			{{else}}
+			{{end -}}
+			{{range $it := $pn.List -}}
+			{{if eq $pn.Now $it -}}
+			<li class="active"><a href="https://{{$this.Host}}/?{{if ne $ot ``}}{{$ot}}&{{end}}p={{$it}}">{{$it}} <span class="sr-only">(current)</span></a></li>
+			{{else -}}
+			<li><a href="https://{{$this.Host}}/?{{if ne $ot ``}}{{$ot}}&{{end}}p={{$it}}">{{$it}}</a></li>
+			{{end -}}
+			{{end -}}
+			{{if ne $pn.Next 0 -}}
+			<li><a href="https://{{$this.Host}}/?{{if ne $ot ``}}{{$ot}}&{{end}}p={{$pn.Next}}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+			{{else -}}
 			<li class="disabled"><a href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
-			{{end}}
+			{{end -}}
 		</ul>
 	</nav>
 
