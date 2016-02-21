@@ -127,8 +127,8 @@ func (dz *Deepzoom) MakeTiles(im image.Image, num int64) error {
 	sync := make(chan struct{}, parallel)
 	maxLevel := numLevels - 1
 	for level := maxLevel; level >= 0; level-- {
-		level_dir := filepath.Join(dir, strconv.Itoa(level))
-		reterr = util.MakedirAll(level_dir)
+		ld := filepath.Join(dir, strconv.Itoa(level))
+		reterr = util.MakedirAll(ld)
 		if reterr != nil {
 			break
 		}
@@ -153,7 +153,7 @@ func (dz *Deepzoom) MakeTiles(im image.Image, num int64) error {
 			tmpimg = resize.Resize(uint(w), uint(h), im, resize.NearestNeighbor)
 		}
 		// create tiles for level
-		reterr = dz.createLevelTiles(sync, w, h, level, level_dir, tmpimg)
+		reterr = dz.createLevelTiles(sync, w, h, level, ld, tmpimg)
 		if reterr != nil {
 			break
 		}
@@ -208,9 +208,8 @@ func (dz *Deepzoom) createLevelTiles(sync chan struct{}, width, height, level in
 			sync <- struct{}{}
 			go func(column, row int) {
 				defer endf()
-				tile_file := fmt.Sprintf("%d_%d.jpg", column, row)
 				x, y, w, h := dz.getTileBounds(level, column, row, width, height)
-				tp := filepath.Join(dir, tile_file)
+				tp := filepath.Join(dir, fmt.Sprintf("%d_%d.jpg", column, row))
 				wfp, err := os.OpenFile(tp, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
 				if err != nil {
 					// TODO:エラーを拾う良い方法を考える
@@ -289,7 +288,7 @@ func min(a, b int) (ret int) {
 func ceil(a float64) int {
 	ret := int(a)
 	if a > float64(int(a)) {
-		ret += 1
+		ret++
 	}
 	return ret
 }

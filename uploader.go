@@ -40,10 +40,10 @@ type imgcHandle struct {
 	fs  http.Handler
 }
 
-var DenyNetworkStr = []string{ /*"27.120.104.14/32",*/ }
+var denyNetworkStr = []string{ /*"27.120.104.14/32",*/ }
 
 func main() {
-	webutil.InitDeny(DenyNetworkStr)
+	webutil.InitDeny(denyNetworkStr)
 	go app.BatchProc()
 	h1s := &http.Server{
 		Addr: ":80",

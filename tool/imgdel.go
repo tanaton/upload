@@ -35,7 +35,7 @@ func main() {
 	var id int64
 	if len(os.Args) >= 2 {
 		var err error
-		id, err = util.DecodeImageId(os.Args[1])
+		id, err = util.DecodeImageID(os.Args[1])
 		if err != nil {
 			log.Fatal(err)
 		}

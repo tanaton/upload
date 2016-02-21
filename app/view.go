@@ -164,7 +164,7 @@ func ViewerHtml(w http.ResponseWriter, r *http.Request, tls bool) (code int, siz
 	out.ZFlag = false
 	_, file := path.Split(path.Clean(r.URL.Path))
 
-	num, perr := util.DecodeImageId(file)
+	num, perr := util.DecodeImageID(file)
 	if perr != nil {
 		return webutil.NotFound(w, r)
 	}

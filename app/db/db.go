@@ -220,24 +220,24 @@ func GetPageTags(offset, limit int64, tags map[string]struct{}) ([]Item, int64, 
 	}
 	defer con.Close()
 
-	const SELECT_OPTION = "SQL_CALC_FOUND_ROWS"
-	const SELECT_COLUM = "id,ext,date,size,width,height,description,passcode,tags"
+	const selectOption = "SQL_CALC_FOUND_ROWS"
+	const selectColum = "id,ext,date,size,width,height,description,passcode,tags"
 	var query string
 	if tags == nil || len(tags) == 0 {
 		query = fmt.Sprintf("SELECT %s %s FROM %s ORDER BY id DESC LIMIT %d, %d",
-			SELECT_OPTION,
-			SELECT_COLUM,
+			selectOption,
+			selectColum,
 			conf.Conf.DBTable,
 			offset,
 			limit)
 	} else {
 		taglist := make([]string, 0, len(tags))
-		for key, _ := range tags {
+		for key := range tags {
 			taglist = append(taglist, sqlEscape(key))
 		}
 		query = fmt.Sprintf(`SELECT %s %s FROM %s WHERE MATCH(tags) AGAINST('+%s' IN BOOLEAN MODE) ORDER BY id DESC LIMIT %d, %d`,
-			SELECT_OPTION,
-			SELECT_COLUM,
+			selectOption,
+			selectColum,
 			conf.Conf.DBTable,
 			strings.Join(taglist, " +"),
 			offset,
@@ -257,7 +257,7 @@ func GetPageTags(offset, limit int64, tags map[string]struct{}) ([]Item, int64, 
 		var tags string
 		var passcode string
 		err = rows.Scan(&id, &it.Ext, &it.Date, &it.Size, &it.Width, &it.Height, &it.Desc, &passcode, &tags)
-		it.Id = util.EncodeImageId(id)
+		it.Id = util.EncodeImageID(id)
 		it.PassCode = passcode != ""
 		if tags != "" {
 			it.Tags = strings.Split(tags, " ")

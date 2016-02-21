@@ -39,7 +39,7 @@ import (
 )
 
 func Download(w http.ResponseWriter, r *http.Request, numstr, ext string) (code int, size int64, err error) {
-	num, perr := util.DecodeImageId(numstr)
+	num, perr := util.DecodeImageID(numstr)
 	if perr != nil {
 		return webutil.NotFoundImage(w, r)
 	}
@@ -96,7 +96,7 @@ func Download(w http.ResponseWriter, r *http.Request, numstr, ext string) (code 
 }
 
 func DownloadThumb(w http.ResponseWriter, r *http.Request, numstr string) (code int, size int64, err error) {
-	num, perr := util.DecodeImageId(numstr)
+	num, perr := util.DecodeImageID(numstr)
 	if perr != nil {
 		return webutil.NotFoundImage(w, r)
 	}

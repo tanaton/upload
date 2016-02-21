@@ -252,7 +252,7 @@ func Upload(w http.ResponseWriter, r *http.Request, tls bool) (code int, size in
 	}
 	f.File.Ttf = ""
 	// アップロード処理完了
-	imgid := util.EncodeImageId(num)
+	imgid := util.EncodeImageID(num)
 	// Dziファイル生成予約
 	dzChan <- deepZoomItem{
 		num:  num,
@@ -320,7 +320,7 @@ func Update(w http.ResponseWriter, r *http.Request, tls bool) (code int, size in
 		return webutil.BadRequest(w, r)
 	}
 	v := r.URL.Query()
-	id, err := util.DecodeImageId(v.Get("id"))
+	id, err := util.DecodeImageID(v.Get("id"))
 	if err != nil {
 		// 400
 		return webutil.BadRequest(w, r)
@@ -359,7 +359,7 @@ func Delete(w http.ResponseWriter, r *http.Request, tls bool) (code int, size in
 		return webutil.MethodNotAllowed(w, r)
 	}
 	v := r.URL.Query()
-	id, pierr := util.DecodeImageId(v.Get("id"))
+	id, pierr := util.DecodeImageID(v.Get("id"))
 	if pierr != nil {
 		return webutil.BadRequest(w, r)
 	}
@@ -525,7 +525,7 @@ func GetPage(r *http.Request) (*PageData, error) {
 	}
 	if tagmap != nil {
 		tmptags := make([]string, 0, len(tagmap))
-		for key, _ := range tagmap {
+		for key := range tagmap {
 			tmptags = append(tmptags, "tag="+url.QueryEscape(key))
 		}
 		oldtags = strings.Join(tmptags, "&")
@@ -556,18 +556,18 @@ func createPagination(pnow, pmax int64) Nombre {
 
 	if pmax <= int64(conf.Conf.PaginateDefault) {
 		list = make([]int64, pmax)
-		for i, _ := range list {
+		for i := range list {
 			list[i] = int64(i) + 1
 		}
 	} else if (pnow - (int64(conf.Conf.PaginateDefault) / 2)) > 0 {
 		list = make([]int64, conf.Conf.PaginateDefault)
 		offset := pnow - (int64(conf.Conf.PaginateDefault) / 2)
-		for i, _ := range list {
+		for i := range list {
 			list[i] = int64(i) + offset
 		}
 	} else {
 		list = make([]int64, conf.Conf.PaginateDefault)
-		for i, _ := range list {
+		for i := range list {
 			list[i] = int64(i) + 1
 		}
 	}

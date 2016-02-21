@@ -247,9 +247,9 @@ func DeleteImageFile(id int64, ext string) {
 	os.Remove(tp)
 }
 
-func EncodeImageId(num int64) string {
+func EncodeImageID(num int64) string {
 	return strconv.FormatInt(num, 36)
 }
-func DecodeImageId(str string) (int64, error) {
+func DecodeImageID(str string) (int64, error) {
 	return strconv.ParseInt(str, 36, 64)
 }
