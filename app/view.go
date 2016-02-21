@@ -65,12 +65,20 @@ var normalTempls = template.New("")
 
 func IndexHtml(w http.ResponseWriter, r *http.Request, tls bool) (code int, size int64, err error) {
 	var out webutil.Output
+	var iu string
+	var tu string
+	var vu string
 	out.Code = http.StatusOK
 	out.Header = http.Header{}
 	out.ZFlag = true
-	iu := "https://" + conf.Conf.Host + "/i/"
-	tu := "https://" + conf.Conf.Host + "/t/"
-	vu := "https://" + conf.Conf.Host + "/v/"
+	// サムネイルはsslじゃないパターンも許容する
+	if tls {
+		tu = "https://" + conf.Conf.Host + "/t/"
+	} else {
+		tu = "http://" + conf.Conf.Host + "/t/"
+	}
+	iu = "https://" + conf.Conf.Host + "/i/"
+	vu = "https://" + conf.Conf.Host + "/v/"
 
 	// ヘッダー出力
 	out.Header.Set("Content-Type", "text/html; charset=utf-8")
