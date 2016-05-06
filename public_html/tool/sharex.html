@@ -8,12 +8,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="shortcut icon" href="http{{if .TLS}}s{{end}}://{{.Host}}/favicon.ico">
 <link rel="icon" href="http{{if .TLS}}s{{end}}://{{.Host}}/favicon.ico">
-<link rel="stylesheet" href="http{{if .TLS}}s{{end}}://{{.Host}}/css/bootstrap-3.3.5.min.css">
-<link rel="stylesheet" href="http{{if .TLS}}s{{end}}://{{.Host}}/css/bootstrap-theme-3.3.5.min.css">
+<link rel="stylesheet" href="http{{if .TLS}}s{{end}}://{{.Host}}/css/bootstrap.min.css?20160507a">
 <link rel="stylesheet" href="http{{if .TLS}}s{{end}}://{{.Host}}/css/default.css?20151122a">
 </head>
-<body>
-<nav class="navbar navbar-inverse navbar-fixed-top">
+<body class="no-thank-yu">
+<nav class="navbar navbar-default navbar-fixed-top">
 	<div class="container">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -130,7 +129,7 @@
 				</select>
 			</div>
 		</form>
-		<button type="button" class="btn btn-primary btn-lg" id="write">設定書き出し</button>
+		<button type="button" class="btn btn-info btn-lg" id="write">設定書き出し</button>
 		<pre id="result">設定書き出しエリア</pre>
 	</div>
 </div>
@@ -140,7 +139,7 @@
 <script src="/js/ie/respond.min.js"></script>
 <![endif]-->
 <script src="/js/lib/jquery-1.11.3.min.js"></script>
-<script src="/js/lib/bootstrap-3.3.5.min.js"></script>
+<script src="/js/lib/bootstrap.min.js?20160507a"></script>
 <script>
 $(function(){
 $("#write").on("click", function(){
