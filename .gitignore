@@ -1,0 +1,6 @@
+*.pem
+*.exe
+*.bat
+/tmp/
+/data/
+/public_html/_dzi/
