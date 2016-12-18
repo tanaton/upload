@@ -1,9 +1,0 @@
-# Shell 形式パターンマッチ文法を指定。
-syntax: glob
-
-*.pem
-*.exe
-*.bat
-tmp/*
-data/*
-public_html/_dzi/*
