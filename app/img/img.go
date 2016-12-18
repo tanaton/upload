@@ -26,9 +26,9 @@ package img
 // 画像を扱う
 
 import (
-	"../library/tiff" // golang.org/x/image/tiff の改造版
 	"bufio"
 	"errors"
+	"github.com/tanaton/go-image/tiff"
 	"golang.org/x/image/bmp"
 	"golang.org/x/image/webp"
 	"image"
